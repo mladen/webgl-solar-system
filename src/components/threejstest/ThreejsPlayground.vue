@@ -21,18 +21,32 @@ const container = ref(null);
 
 // const geometry = new THREE.BoxGeometry(1, 1, 1);
 // const geometry = new THREE.TorusGeometry(1, 0.2, 16, 100);
-const geometry = new THREE.SphereGeometry(1, 32, 16);
-const material = new THREE.MeshBasicMaterial({
+const geometry = new THREE.SphereGeometry(1, 32, 16); // parameters: radius, widthSegments, heightSegments
+const material = new THREE.MeshStandardMaterial({
   color: 'lightblue',
-  wireframe: true,
+  // wireframe: true,
 });
+
+const pointLight = new THREE.PointLight(0xffffff);
+pointLight.position.set(2, 2, 2);
+scene.add(pointLight);
+
+const ambientLight = new THREE.AmbientLight('navyblue', 0.2);
+scene.add(ambientLight);
 
 const threeObject = new THREE.Mesh(geometry, material);
 scene.add(threeObject);
 
 // camera.position.z = 5;
 // camera.position.setZ(30);
-camera.position.set(0, 0, 5);
+camera.position.set(0, 0, 8);
+
+// Helpers
+const lightHelper = new THREE.PointLightHelper(pointLight);
+scene.add(lightHelper);
+
+const gridHelper = new THREE.GridHelper(200, 50);
+scene.add(gridHelper);
 
 const resizeHandler = () => {
   const width = window.innerWidth;
@@ -44,8 +58,8 @@ const resizeHandler = () => {
 
 const animate = () => {
   requestAnimationFrame(animate);
-  threeObject.rotation.x += 0.01;
-  threeObject.rotation.y += 0.01;
+  threeObject.rotation.x += 0.001;
+  threeObject.rotation.y += 0.003;
   renderer.render(scene, camera);
 };
 
