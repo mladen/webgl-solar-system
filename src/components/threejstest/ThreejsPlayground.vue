@@ -4,6 +4,7 @@
 
 <script setup>
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const scene = new THREE.Scene();
@@ -27,12 +28,16 @@ const material = new THREE.MeshStandardMaterial({
   // wireframe: true,
 });
 
+// Lights
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(2, 2, 2);
 scene.add(pointLight);
 
 const ambientLight = new THREE.AmbientLight('navyblue', 0.2);
 scene.add(ambientLight);
+
+// Controls
+const controls = new OrbitControls(camera, renderer.domElement);
 
 const threeObject = new THREE.Mesh(geometry, material);
 scene.add(threeObject);
@@ -60,6 +65,9 @@ const animate = () => {
   requestAnimationFrame(animate);
   threeObject.rotation.x += 0.001;
   threeObject.rotation.y += 0.003;
+
+  controls.update();
+
   renderer.render(scene, camera);
 };
 
