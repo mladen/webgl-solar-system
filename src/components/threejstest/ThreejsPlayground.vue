@@ -9,6 +9,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 // SCEENE, CAMERA, RENDERER
 const scene = new THREE.Scene();
+const earthGroup = new THREE.Group();
+scene.add(earthGroup);
 const camera = new THREE.PerspectiveCamera(
   75, // field of view, measured in degrees; 75 is a good default which is roughly equivalent to human vision
   window.innerWidth / window.innerHeight, // aspect ratio
@@ -39,7 +41,8 @@ const material = new THREE.MeshStandardMaterial({
 
 // OBJECT
 const earthMeshObject = new THREE.Mesh(geometry, material);
-scene.add(earthMeshObject);
+// scene.add(earthMeshObject);
+earthGroup.add(earthMeshObject);
 
 // LIGHTS
 const pointLight = new THREE.PointLight(0xffffff, 40); // color, intensity, distance
