@@ -10,7 +10,9 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 // SCEENE, CAMERA, RENDERER
 const scene = new THREE.Scene();
 const earthGroup = new THREE.Group();
+earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
 scene.add(earthGroup);
+
 const camera = new THREE.PerspectiveCamera(
   75, // field of view, measured in degrees; 75 is a good default which is roughly equivalent to human vision
   window.innerWidth / window.innerHeight, // aspect ratio
@@ -94,8 +96,7 @@ const resizeHandler = () => {
 // ANIMATION LOOP
 const animate = () => {
   requestAnimationFrame(animate);
-  earthMeshObject.rotation.x += 0.001;
-  earthMeshObject.rotation.y += 0.003;
+  earthMeshObject.rotation.y += 0.003; // This is the rotation speed of the object, on the y-axis, measured in radians
 
   // pointLight.position.x -= 0.01;
 
