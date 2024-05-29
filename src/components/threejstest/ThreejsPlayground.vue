@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
+// SCEENE, CAMERA, RENDERER
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75, // field of view, measured in degrees; 75 is a good default which is roughly equivalent to human vision
@@ -14,37 +15,47 @@ const camera = new THREE.PerspectiveCamera(
   0.1, // view frustum near plane meaning that objects closer than 0.1 units to the camera will not be rendered
   1000 // view frustum far plane meaning that objects further than 1000 units from the camera will not be rendered
 );
-const renderer = new THREE.WebGLRenderer(); // WebGLRenderer is the renderer class used to render 3D objects to a canvas
+const renderer = new THREE.WebGLRenderer({ antialias: true }); // WebGLRenderer is the renderer class used to render 3D objects to a canvas
 // renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+// CONTAINER
 const container = ref(null);
 
+// GEOMETRY AND MATERIAL
 // const geometry = new THREE.BoxGeometry(1, 1, 1);
-// const geometry = new THREE.TorusGeometry(1, 0.2, 16, 100);
-const geometry = new THREE.SphereGeometry(1, 32, 16); // parameters: radius, widthSegments, heightSegments
+// const geometry = new THREE.TorusGeometry(5, 2, 16, 100); // parameters: radius, tube, radialSegments, tubularSegments
+// const geometry = new THREE.SphereGeometry(4, 32, 16); // parameters: radius, widthSegments, heightSegments
+const geometry = new THREE.IcosahedronGeometry(4, 12); // parameters: radius, detail
 const material = new THREE.MeshStandardMaterial({
-  color: 'lightblue',
+  // color: 0x3e3ed2,
+  // map: new THREE.TextureLoader().load('/images/earthrelief.jpg'),
+  // map: new THREE.TextureLoader().load('/images/earthnasa.tif'),
+  map: new THREE.TextureLoader().load('/images/earth8k.jpg'),
+  // flatShading: true, // flat shading is a technique that makes the faces of a 3D object appear flat with sharp edges
   // wireframe: true,
+  // map: new THREE.TextureLoader().load('path/to/texture.jpg'),
 });
 
-// Lights
-const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(2, 2, 2);
+// OBJECT
+const earthMeshObject = new THREE.Mesh(geometry, material);
+scene.add(earthMeshObject);
+
+// LIGHTS
+const pointLight = new THREE.PointLight(0xffffff, 40); // color, intensity, distance
+pointLight.position.set(3, 3, 5);
 scene.add(pointLight);
 
-const ambientLight = new THREE.AmbientLight('navyblue', 0.2);
+const ambientLight = new THREE.AmbientLight(0xffffff); // color, intensity // 0xa3b899
 scene.add(ambientLight);
 
-// Controls
+// CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 
-const threeObject = new THREE.Mesh(geometry, material);
-scene.add(threeObject);
-
+// CAMERA
 // camera.position.z = 5;
 // camera.position.setZ(30);
-camera.position.set(0, 0, 8);
+camera.position.set(-3, 0, 30);
 
 // Helpers
 const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -53,6 +64,22 @@ scene.add(lightHelper);
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
 
+// Adding multiple stars to the scene
+const addStar = () => {
+  const geometry = new THREE.SphereGeometry(0.25, 24, 24);
+  const material = new THREE.MeshStandardMaterial({ color: 'white' });
+  const star = new THREE.Mesh(geometry, material);
+
+  const [x, y, z] = Array(3)
+    .fill()
+    .map(() => THREE.MathUtils.randFloatSpread(100));
+
+  star.position.set(x, y, z);
+  scene.add(star);
+};
+Array(200).fill().forEach(addStar);
+
+// Resize handler; this is necessary to make the canvas responsive
 const resizeHandler = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -61,22 +88,27 @@ const resizeHandler = () => {
   camera.updateProjectionMatrix();
 };
 
+// ANIMATION LOOP
 const animate = () => {
   requestAnimationFrame(animate);
-  threeObject.rotation.x += 0.001;
-  threeObject.rotation.y += 0.003;
+  earthMeshObject.rotation.x += 0.001;
+  earthMeshObject.rotation.y += 0.003;
+
+  // pointLight.position.x -= 0.01;
 
   controls.update();
 
   renderer.render(scene, camera);
 };
 
+// MOUNTING
 onMounted(() => {
   container.value.appendChild(renderer.domElement);
   animate();
   window.addEventListener('resize', resizeHandler);
 });
 
+// UNMOUNTING
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeHandler);
 });
