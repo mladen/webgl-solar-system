@@ -30,7 +30,7 @@ const container = ref(null);
 // const geometry = new THREE.BoxGeometry(1, 1, 1);
 // const geometry = new THREE.TorusGeometry(5, 2, 16, 100); // parameters: radius, tube, radialSegments, tubularSegments
 // const geometry = new THREE.SphereGeometry(4, 32, 16); // parameters: radius, widthSegments, heightSegments
-const geometry = new THREE.IcosahedronGeometry(4, 12); // parameters: radius, detail
+const geometry = new THREE.IcosahedronGeometry(1, 12); // parameters: radius, detail
 const material = new THREE.MeshStandardMaterial({
   // color: 0x3e3ed2,
   // map: new THREE.TextureLoader().load('/images/earthrelief.jpg'),
@@ -47,12 +47,20 @@ const earthMeshObject = new THREE.Mesh(geometry, material);
 earthGroup.add(earthMeshObject);
 
 // LIGHTS
-const pointLight = new THREE.PointLight(0xffffff, 40); // color, intensity, distance
-pointLight.position.set(3, 3, 5);
+const lightsMaterial = new THREE.MeshBasicMaterial({
+  map: new THREE.TextureLoader().load('/images/earthlights1k.jpg'),
+  blending: THREE.AdditiveBlending,
+});
+const lightsMeshObject = new THREE.Mesh(geometry, lightsMaterial);
+earthGroup.add(lightsMeshObject);
+
+// const pointLight = new THREE.PointLight(0xffffff, 40); // color, intensity, distance
+const pointLight = new THREE.DirectionalLight(0xffffff, 1); // color, intensity
+pointLight.position.set(2, 2, 0);
 scene.add(pointLight);
 
-const ambientLight = new THREE.AmbientLight(0xffffff); // color, intensity // 0xa3b899
-scene.add(ambientLight);
+// const ambientLight = new THREE.AmbientLight(0xffffff); // color, intensity // 0xa3b899
+// scene.add(ambientLight);
 
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -60,7 +68,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // CAMERA
 // camera.position.z = 5;
 // camera.position.setZ(30);
-camera.position.set(-3, 0, 30);
+camera.position.set(-3, 3, 4);
 
 // Helpers
 const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -97,7 +105,7 @@ const resizeHandler = () => {
 const animate = () => {
   requestAnimationFrame(animate);
   earthMeshObject.rotation.y += 0.003; // This is the rotation speed of the object, on the y-axis, measured in radians
-
+  lightsMeshObject.rotation.y += 0.003;
   // pointLight.position.x -= 0.01;
 
   controls.update();
