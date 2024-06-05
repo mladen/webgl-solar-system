@@ -7,21 +7,28 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-// SCEENE, CAMERA, RENDERER
-const scene = new THREE.Scene();
+// EARTH GROUP
 const earthGroup = new THREE.Group();
 earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
+
+// SCEENE
+const scene = new THREE.Scene();
 scene.add(earthGroup);
 
+// CAMERA
 const camera = new THREE.PerspectiveCamera(
   75, // field of view, measured in degrees; 75 is a good default which is roughly equivalent to human vision
   window.innerWidth / window.innerHeight, // aspect ratio
   0.1, // view frustum near plane meaning that objects closer than 0.1 units to the camera will not be rendered
   1000 // view frustum far plane meaning that objects further than 1000 units from the camera will not be rendered
 );
+
+// RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true }); // WebGLRenderer is the renderer class used to render 3D objects to a canvas
 // renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
 // CONTAINER
 const container = ref(null);
@@ -46,6 +53,9 @@ const earthMeshObject = new THREE.Mesh(geometry, material);
 // scene.add(earthMeshObject);
 earthGroup.add(earthMeshObject);
 
+// CONTROLS
+const controls = new OrbitControls(camera, renderer.domElement);
+
 // LIGHTS
 const lightsMaterial = new THREE.MeshBasicMaterial({
   map: new THREE.TextureLoader().load('/images/earthlights1k.jpg'),
@@ -55,20 +65,17 @@ const lightsMeshObject = new THREE.Mesh(geometry, lightsMaterial);
 earthGroup.add(lightsMeshObject);
 
 // const pointLight = new THREE.PointLight(0xffffff, 40); // color, intensity, distance
-const pointLight = new THREE.DirectionalLight(0xffffff, 1); // color, intensity
-pointLight.position.set(2, 2, 0);
+const pointLight = new THREE.DirectionalLight(0xffffff, 7); // color, intensity
+pointLight.position.set(10, 2, 0);
 scene.add(pointLight);
 
 // const ambientLight = new THREE.AmbientLight(0xffffff); // color, intensity // 0xa3b899
 // scene.add(ambientLight);
 
-// CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement);
-
 // CAMERA
 // camera.position.z = 5;
 // camera.position.setZ(30);
-camera.position.set(-3, 3, 4);
+camera.position.set(-3, 3, 5);
 
 // Helpers
 const lightHelper = new THREE.PointLightHelper(pointLight);
