@@ -1,6 +1,7 @@
 # Solar system in WebGL (using Three.js)
 
-![Planet Earth](screenshot_from_2024-06-06.png 'Our home, our Blue marble')
+![Planet Earth](screenshot_from_2024-06-06_zoomed_in.png 'Our home')
+![Planet Earth](screenshot_from_2024-06-06.png 'The Blue Marble')
 
 ## Install the dependencies
 
