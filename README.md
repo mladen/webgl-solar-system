@@ -1,6 +1,6 @@
-# Exploratorium of ideas (exploratorium)
+# Solar system in WebGL (using Three.js)
 
-Explorin various ideas
+![Planet Earth](screenshot_from_2024-06-06.png 'Our home, our Blue marble')
 
 ## Install the dependencies
 
